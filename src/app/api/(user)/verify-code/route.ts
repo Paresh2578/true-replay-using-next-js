@@ -17,19 +17,22 @@ export async function POST(request : Request){
         //  get user
         const user = await UserModel.findOne({username : username});
         if(!user){
-            ApiResponseMessage({success:false , statusCode:404 ,message:"user not found"});
+            return ApiResponseMessage({success:false , statusCode:404 ,message:"user not found"});
         }
         
 
         //// Check if the code is correct and not expired
-        const isCodeValid = user!.verifyCode === verifyCode;
+        const isCodeValid = user!.verifyCode == verifyCode;
         const isCodeNotExpired = new Date(user!.verifyCodeExpiry) > new Date();
+
+        console.log(username , verifyCode);
+        console.log(isCodeValid);
+        console.log(isCodeNotExpired);
 
         // // Code is correct
         if(isCodeValid && isCodeNotExpired){
           // Update the user's verification status
             user!.isVerified = true;
-
             await user!.save();
             return ApiResponseMessage({success:true , statusCode:200 ,message:"Account verified successfully"});
         }else if(!isCodeNotExpired){

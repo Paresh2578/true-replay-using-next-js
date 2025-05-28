@@ -83,7 +83,7 @@ export default function SignUp() {
         router.replace(`/verify/${data.username}`);
       }catch(error){
         const axiosError = error as AxiosError<ApiResponseMessage>;
-        toast.error(axiosError.response?.data.message || "Failed to sign try again");
+        toast.error(axiosError.response?.data.message || "Failed to sign up try again");
       }finally{
         setSubmitLoading(false);
       }

@@ -16,9 +16,9 @@ export async function GET(request:Request){
         const user = await getUserFromRequest();
 
         // 2. get All feedbacks
-        const feedbacks = await FeedbackModel.find({userId:user._id})
+        const feedbacks = await FeedbackModel.find({userId:user._id}).sort({createdAt:-1})
 
-        return ApiResponseMessage({success:true,statusCode:201,message:"Successfully Get all feedback" , data:feedbacks});
+        return ApiResponseMessage({success:true,statusCode:200,message:"Successfully Get all feedback" , data:feedbacks});
     }catch(error){
         return ApiResponseMessage({success:false , statusCode:500 ,message:"Failed to Get ALL Feedback"});
     }

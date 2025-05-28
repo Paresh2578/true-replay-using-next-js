@@ -2,6 +2,7 @@ import ApiResponseMessage from "@/app/types/apiResponseMessage";
 import dbConnect from "@/helpers/dbConnect";
 import handleMongooseValidationError from "@/helpers/handleMongooseValidationError";
 import FeedbackModel, { Feedback } from "@/models/feedback.model";
+import UserModel, { User } from "@/models/user.model";
 
 
 export async function POST(request:Request){
@@ -10,6 +11,14 @@ export async function POST(request:Request){
     try{
         const {content , star, userId , createdAt} = await request.json() as Feedback;
 
+        // check user accept msg or not
+        const user = await UserModel.findOne({_id : userId}) as User;
+
+        if(!user){
+            return ApiResponseMessage({success:false , statusCode:404 ,message:"User not found"});
+        }else if(!user.isAcceptingMessages){
+             return ApiResponseMessage({success:false , statusCode:500 ,message:"User Message not accept"});
+        }
         const newFeedback = new FeedbackModel({
             content,
             star,

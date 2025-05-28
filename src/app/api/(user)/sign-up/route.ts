@@ -27,22 +27,8 @@ export async  function POST(request : Request) : Promise<any>{
         const verifyCode = genrateOTP(6);
 
         if(existingUserByEmail){
-            if(existingUserByEmail.isVerified){
-                return ApiResponseMessage({message : "'User already exists with this email", statusCode : 400 ,success:false })
-            }
-
-            // update database
-            const hashedPassword : string = await bcrypt.hash(password,10) as string;
-            const expiryDate= new Date();
-            expiryDate.setHours(expiryDate.getHours()+1);
-
-            existingUserByEmail.password = hashedPassword;
-            existingUserByEmail.verifyCodeExpiry = expiryDate;
-            existingUserByEmail.verifyCode=  verifyCode;
-
-            await existingUserByEmail.save();
-
-        }else{
+        return ApiResponseMessage({message : "'User already exists with this email", statusCode : 400 ,success:false })
+        }
             // add new user
             const hashedPassword : string = await bcrypt.hash(password,10) as string;
             const expiryDate= new Date();
@@ -59,8 +45,7 @@ export async  function POST(request : Request) : Promise<any>{
             });
 
             await newUser.save();
-        }
-
+            
         //send verification code
        const sendEmail =  await sendVerificationEmail({email , username , verifyCode});
        if(sendEmail) return sendEmail;

@@ -18,12 +18,14 @@ const userScheme : Schema<User> = new Schema({
         trim : true,
         match:[/[A-Za-z0-9_]+$/ , 'Username must not contain special characters'],
         minlength : [2,'Username must be at least 2 characters'],
-        maxlength : [20, 'Username must be no more than 20 characters']
+        maxlength : [20, 'Username must be no more than 20 characters'],
+        unique : true
     },
      email: {
         type: String,
         required: [true, 'Email is required'],
         match: [/.+\@.+\..+/, 'Please use a valid email address'],
+        unique : true
     },
     password: {
         type: String,

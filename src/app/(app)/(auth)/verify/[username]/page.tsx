@@ -29,7 +29,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
-import { otpSchema } from '@/schemas/otpSchema';
+import { verifyCodeSchema } from '@/schemas/verifyCodeSchema';
 
 export default function Verify() {
   const {username} = useParams<{ username: string }>();
@@ -38,15 +38,15 @@ export default function Verify() {
   
   const [submitLoading,setSubmitLoading] = useState<boolean>(false);
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm<z.infer<typeof otpSchema>>({
-         resolver: zodResolver(otpSchema),
+  const { register, handleSubmit, control, formState: { errors } } = useForm<z.infer<typeof verifyCodeSchema>>({
+         resolver: zodResolver(verifyCodeSchema),
       });
 
-  const onSubmit = async(data : z.infer<typeof otpSchema>)=>{
+  const onSubmit = async(data : z.infer<typeof verifyCodeSchema>)=>{
     setSubmitLoading(true);
 
     try{
-      const res = await axios.post("/api/verify-code",{username ,verifyCode : data});
+      const res = await axios.post("/api/verify-code",{username ,verifyCode : data.verifyCode});
 
       toast.success(res.data.message);
 
@@ -70,7 +70,7 @@ export default function Verify() {
                 <div className="grid w-full items-center justify-center gap-4">
                     <Controller
                         control={control}
-                        name="otp"
+                        name="verifyCode"
                         render={({ field }) => (
                           <InputOTP
                             maxLength={6}
@@ -95,7 +95,7 @@ export default function Verify() {
                           </InputOTP>
                         )}
                       />
-                      {errors.otp && <Label className='text-red-500'>{errors.otp.message}</Label>}
+                      {errors.verifyCode && <Label className='text-red-500'>{errors.verifyCode.message}</Label>}
                 </div>
 
             </CardContent>

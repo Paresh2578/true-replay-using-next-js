@@ -9,6 +9,7 @@ import Link from 'next/link';
 export default function Navbar() {
   const {data : session} = useSession();
   const user : User = session?.user;
+
   return (
     <nav className='min-h-[9vh] flex justify-center p-2 items-center w-[100wv]'>
       <div className='bg-card p-4 ps-4 pe-4 shadow-2xl  items-center w-full  rounded-2xl'>
@@ -16,7 +17,7 @@ export default function Navbar() {
           <p className='text-gray-900 font-bold text-2xl'>True Feedback</p>
 
           {
-            user && <p className='text-amber-50'>Welcome, paresh</p>
+            user && <p className='text-gray-900'>Welcome, paresh</p>
           }
           
           {
