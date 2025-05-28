@@ -20,9 +20,13 @@ export default async function sendVerificationEmail({email , username  , verifyC
     });
 
     if(error){
+        console.log(error);
         return ApiResponseMessage({message : "Failed to send verification code",statusCode:500 , success:false});
+    }else{
+        return null;
     }
     }catch(error){
+        console.log(error);
         return ApiResponseMessage({message : "Failed to send verification code",statusCode:500 , success:false});
     }
 }

@@ -4,6 +4,7 @@ import genrateOTP from "@/helpers/genrateOTP";
 import sendVerificationEmail from "@/helpers/sendVerificationEmail";
 import UserModel, { User } from "@/models/user.model";
 import bcrypt from "bcryptjs";
+import { TruckElectricIcon } from "lucide-react";
 
 export async  function POST(request : Request) : Promise<any>{
    await dbConnect();
@@ -37,6 +38,7 @@ export async  function POST(request : Request) : Promise<any>{
 
             existingUserByEmail.password = hashedPassword;
             existingUserByEmail.verifyCodeExpiry = expiryDate;
+            existingUserByEmail.verifyCode=  verifyCode;
 
             await existingUserByEmail.save();
 
@@ -50,7 +52,7 @@ export async  function POST(request : Request) : Promise<any>{
                 username: username,
                 email: email,
                 password: hashedPassword,
-                verifyCode: genrateOTP(5),
+                verifyCode: verifyCode,
                 isVerified: false,
                 isAcceptingMessages: true,
                 verifyCodeExpiry : expiryDate
@@ -60,11 +62,13 @@ export async  function POST(request : Request) : Promise<any>{
         }
 
         //send verification code
-        await sendVerificationEmail({email , username , verifyCode});
+       const sendEmail =  await sendVerificationEmail({email , username , verifyCode});
+       if(sendEmail) return sendEmail;
 
         return ApiResponseMessage({statusCode:201 , success:true , message:"successfully sign"});
 
     }catch(error){
+        console.log(error);
         return ApiResponseMessage({message : "failed to sign up",success : false , statusCode:500})
     }
 }   

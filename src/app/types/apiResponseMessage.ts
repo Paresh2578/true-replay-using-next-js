@@ -1,5 +1,5 @@
 
-type ResponseMessageParams = {
+export interface ApiResponseMessage {
   message: string;
   success: boolean;
   statusCode: number;
@@ -7,7 +7,7 @@ type ResponseMessageParams = {
 };
 
 
-export default function ApiResponseMessage({message , success  , statusCode , data} : ResponseMessageParams){
+export default function ApiResponseMessage({message , success  , statusCode , data} : ApiResponseMessage){
     return Response.json(
         {
             success,
