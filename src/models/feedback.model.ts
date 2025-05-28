@@ -1,13 +1,13 @@
-import mongoose , {Mongoose, Schema,Document} from "mongoose";
+import mongoose , {Schema,Document} from "mongoose";
 
-export interface Message {
+export interface Feedback {
     _id ?: string;
     content : string;
     userId : string;
     createdAt : Date
 }
 
-const MessageSchema : Schema<Message> = new Schema({
+const FeedbackSchema : Schema<Feedback> = new Schema({
     content : {
         type : String,
         required : [true, "Content is required"],
@@ -25,6 +25,6 @@ const MessageSchema : Schema<Message> = new Schema({
     }
 })
 
-const MessageModel = (mongoose.models.Message as mongoose.Model<Message>) || (mongoose.model<Message>("Message",MessageSchema));
+const FeedbackModel = (mongoose.models.Feedback as mongoose.Model<Feedback>) || (mongoose.model<Feedback>("Feedback",FeedbackSchema));
 
-export default MessageModel;
+export default FeedbackModel;

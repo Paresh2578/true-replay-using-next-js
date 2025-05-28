@@ -7,7 +7,7 @@ type ResponseMessageParams = {
 };
 
 
-export default function ResponseMessage({message , success  , statusCode , data} : ResponseMessageParams){
+export default function ApiResponseMessage({message , success  , statusCode , data} : ResponseMessageParams){
     return Response.json(
         {
             success,

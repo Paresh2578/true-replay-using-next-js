@@ -1,6 +1,7 @@
+import ApiResponseMessage from "@/app/types/apiResponseMessage";
 import dbConnect from "@/helpers/dbConnect";
 import genrateOTP from "@/helpers/genrateOTP";
-import ResponseMessage from "@/helpers/responseMessage";
+import sendVerificationEmail from "@/helpers/sendVerificationEmail";
 import UserModel, { User } from "@/models/user.model";
 import bcrypt from "bcryptjs";
 
@@ -11,21 +12,22 @@ export async  function POST(request : Request) : Promise<any>{
          * 1. check uniqe username existingVerifiedUserByUsername
          * 2. check by email and verify
          * 3. save
+         * 4. send mail
          */
         const {username , email , password} = await request.json();
 
         let existingVerifiedUserByUsername = await UserModel.findOne({username : username});
 
         if(existingVerifiedUserByUsername){
-            return ResponseMessage({message : "username alredy used",success:false , statusCode:400});
+            return ApiResponseMessage({message : "username alredy used",success:false , statusCode:400});
         }
 
-        const existingUserByEmail : User = await UserModel.findOne({email : email}) as User;
+        const existingUserByEmail  =  await UserModel.findOne({email : email});
         const verifyCode = genrateOTP(6);
 
         if(existingUserByEmail){
             if(existingUserByEmail.isVerified){
-                return ResponseMessage({message : "'User already exists with this email", statusCode : 400 ,success:false })
+                return ApiResponseMessage({message : "'User already exists with this email", statusCode : 400 ,success:false })
             }
 
             // update database
@@ -33,8 +35,10 @@ export async  function POST(request : Request) : Promise<any>{
             const expiryDate= new Date();
             expiryDate.setHours(expiryDate.getHours()+1);
 
-            existingUserByEmail.password = hashedPassword,
-            // existingUserByEmail.verifyCodeExpiry = existingUserByEmail,
+            existingUserByEmail.password = hashedPassword;
+            existingUserByEmail.verifyCodeExpiry = expiryDate;
+
+            await existingUserByEmail.save();
 
         }else{
             // add new user
@@ -53,10 +57,14 @@ export async  function POST(request : Request) : Promise<any>{
             });
 
             await newUser.save();
-
-            //send OTP
         }
+
+        //send verification code
+        await sendVerificationEmail({email , username , verifyCode});
+
+        return ApiResponseMessage({statusCode:201 , success:true , message:"successfully sign"});
+
     }catch(error){
-        return ResponseMessage({message : "failed to sign up",success : false , statusCode:500})
+        return ApiResponseMessage({message : "failed to sign up",success : false , statusCode:500})
     }
 }   
