@@ -16,7 +16,10 @@ const userScheme : Schema<User> = new Schema({
         type:String,
         required : [true,"Username is required"],
         trim : true,
-        unique : true
+        unique : true,
+        match:[/[A-Za-z0-9_]+$/ , 'Username must not contain special characters'],
+        minlength : [2,'Username must be at least 2 characters'],
+        maxlength : [20, 'Username must be no more than 20 characters']
     },
      email: {
         type: String,
@@ -46,6 +49,6 @@ const userScheme : Schema<User> = new Schema({
     }
 })
 
-const UserModel = (mongoose.models.user as mongoose.Model<User>) || (mongoose.model<User>("User",userScheme));
+const UserModel = (mongoose.models.user as mongoose.Model<User>) || (mongoose.model("User",userScheme));
 
 export default UserModel;

@@ -3,8 +3,9 @@ import mongoose , {Schema,Document} from "mongoose";
 export interface Feedback {
     _id ?: string;
     content : string;
+    star? : number,
     userId : string;
-    createdAt : Date
+    createdAt? : Date
 }
 
 const FeedbackSchema : Schema<Feedback> = new Schema({
@@ -12,6 +13,10 @@ const FeedbackSchema : Schema<Feedback> = new Schema({
         type : String,
         required : [true, "Content is required"],
         trim:true
+    },
+    star : {
+        type : Number,
+        enum : [1,2,3,4,5]
     },
     userId : {
       type:String,
