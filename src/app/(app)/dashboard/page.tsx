@@ -22,7 +22,6 @@ export default function Dashboard() {
    const [loading,setLoading] = useState<boolean>();
    const [feedbacks , setFeedbacks] = useState<Feedback[]>();
    const [acceptMessage,setAcceptMessage] = useState<boolean>();
-   const [firstTime , setFirstTime] = useState<boolean>(true);
 
 
       const chnageStatus = async (checked: boolean) => {
@@ -52,7 +51,6 @@ export default function Dashboard() {
          setLoading(true);
             try{
               const res = await axios.get("/api/get-all-feedback");
-              toast.success(res.data.message);
               setFeedbacks(res.data.data);
             }catch(error){
               const axiosError = error as AxiosError<ApiResponseMessage>;
@@ -66,10 +64,8 @@ export default function Dashboard() {
          try{
           console.log(user);
               const res = await axios.get(`/api/get-acceept-message-status/${user?._id}`);
-              console.log(res.data);
               setAcceptMessage(res.data.data);
             }catch(error){
-              // getAcceeptMessageStatus();
             }
    }
 
@@ -78,6 +74,10 @@ export default function Dashboard() {
       navigator.clipboard.writeText(profileUrl);
       toast('Profile URL has been copied to clipboard.');
    };
+
+   const onMessageDelete = async (id : string)=>{
+        setFeedbacks(feedbacks?.filter((feedback) => feedback._id != id));
+   }
 
 
 
@@ -110,7 +110,7 @@ export default function Dashboard() {
            {
             (feedbacks && !loading) ? feedbacks.map((feedback : Feedback)=>{
               return <div key={feedback._id}>
-                 <FeedbackCard feedback={feedback}/>
+                 <FeedbackCard feedback={feedback} onFeedbackDelete={onMessageDelete}/>
               </div>
             }) : <div><Loader2 className="animate-spin"/></div>
            }

@@ -42,12 +42,12 @@ export default function FeedbackWrite({params} : FeedbackWriteProps) {
         try{
           const res = await axios.post("/api/write-feedback" , {content : data.message , userId : userId});
           toast.success(res.data.message);
-          reset();
         }catch(error){
           const axiosError = error as AxiosError<ApiResponseMessage>;
         toast.error(axiosError.response?.data.message || "Failed to write feedback try again");
         }finally{
           setLoading(false);
+          reset();
         }
       }
   return (
